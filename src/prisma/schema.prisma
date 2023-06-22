@@ -17,21 +17,21 @@ model User {
   isSuperUser Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  Notes       Note[]
+  Note        Note[]
+  Event       Event[]
 }
 
 model Book {
   id           String    @id @default(uuid())
   title        String
-  descitprion  String
+  description  String
   language     String
   publish_date DateTime?
   author       Author    @relation(fields: [authorId], references: [id])
   authorId     String
-  note         Note      @relation(fields: [noteId], references: [id], onDelete: Cascade)
-  noteId       String
   createdAt    DateTime  @default(now())
-  Event        Event[]
+  Note         Note[]
+  Event        Event?
 }
 
 model Author {
@@ -40,7 +40,7 @@ model Author {
   lastName  String   @db.VarChar(64)
   birthDate DateTime
   createdAt DateTime @default(now())
-  Books     Book[]
+  Book      Book[]
 }
 
 model Note {
@@ -48,9 +48,10 @@ model Note {
   text      String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
+  book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  bookId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  Book      Book[]
 }
 
 model Event {
@@ -60,8 +61,10 @@ model Event {
   city          String   @db.VarChar(32)
   byInvitation  Boolean  @default(false)
   ageRegulation Boolean  @default(false)
-  book          Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  book          Book     @relation(fields: [bookId], references: [id])
   bookId        String   @unique
+  user          User     @relation(fields: [userId], references: [id])
+  userId        String
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
