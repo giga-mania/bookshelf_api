@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(uuid())
+  firstName   String
+  lastName    String
+  email       String   @unique
+  username    String   @unique
+  password    String
+  isSuperUser Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  Notes       Note[]
+}
+
+model Book {
+  id           String    @id @default(uuid())
+  title        String
+  descitprion  String
+  language     String
+  publish_date DateTime?
+  author       Author    @relation(fields: [authorId], references: [id])
+  authorId     String
+  note         Note      @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  noteId       String
+  createdAt    DateTime  @default(now())
+  Event        Event[]
+}
+
+model Author {
+  id        String   @id @default(uuid())
+  firstName String   @db.VarChar(64)
+  lastName  String   @db.VarChar(64)
+  birthDate DateTime
+  createdAt DateTime @default(now())
+  Books     Book[]
+}
+
+model Note {
+  id        String   @id @default(uuid())
+  text      String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Book      Book[]
+}
+
+model Event {
+  id            String   @id @default(uuid())
+  title         String   @db.VarChar(255)
+  evetDate      DateTime
+  city          String   @db.VarChar(32)
+  byInvitation  Boolean  @default(false)
+  ageRegulation Boolean  @default(false)
+  book          Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  bookId        String   @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
