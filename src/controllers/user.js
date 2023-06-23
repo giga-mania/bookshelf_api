@@ -140,7 +140,7 @@ const refreshToken = (req, res) => {
         return res.status(401).json({
             status: 'FAILED',
             data: {
-                error: "Refresh token weren't provide"
+                error: "Refresh token weren't provided!"
             }
         })
     }
