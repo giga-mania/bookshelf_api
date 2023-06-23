@@ -1,11 +1,12 @@
-const router = require('express').Router()
-const {registerUser, loginUser, refreshToken} = require("../controllers/user")
+import {Router} from "express";
+import {loginUser, refreshToken, registerUser} from "../controllers/user.js"
 
+
+const router = Router()
 
 router.post('/register', registerUser)
-
 router.post('/login', loginUser)
+router.post('/token-refresh', refreshToken)
 
-router.post('token-refresh', refreshToken)
 
-module.exports = router
+export default router
