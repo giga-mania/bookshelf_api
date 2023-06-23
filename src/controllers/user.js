@@ -22,7 +22,7 @@ const registerUser = async (req, res) => {
                 email: email
             }
         })
-        if (emailUser){
+        if (emailUser) {
             return res.status(400).json({
                 status: 'FAILED',
                 data: {
@@ -72,7 +72,7 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
     const {username, password} = req.body
 
-    if(!username || !password) {
+    if (!username || !password) {
         return res.status(400).json({
             status: 'FAILED',
             data: {
@@ -88,7 +88,7 @@ const loginUser = async (req, res) => {
             }
         })
 
-        if(!user) {
+        if (!user) {
             return res.status(401).json({
                 status: 'FAILED',
                 data: {
@@ -99,7 +99,7 @@ const loginUser = async (req, res) => {
 
         const isPasswordValid = await verifyPassword(password, user.password)
 
-        if(!isPasswordValid) {
+        if (!isPasswordValid) {
             return res.status(401).json({
                 status: 'FAILED',
                 data: {
@@ -114,7 +114,7 @@ const loginUser = async (req, res) => {
         res.cookie('jwt', refreshToken, {
             httpOnly: true,
             sameSite: 'None',
-            secure: true,
+            // secure: true,
             maxAge: 24 * 60 * 60 * 1000
         })
 
@@ -134,7 +134,43 @@ const loginUser = async (req, res) => {
 
 
 const refreshToken = (req, res) => {
-    // const refreshToken = req.cookies
+    const refreshToken = req.cookies?.jwt
+
+    if (!refreshToken) {
+        return res.status(401).json({
+            status: 'FAILED',
+            data: {
+                error: "Refresh token weren't provide"
+            }
+        })
+    }
+
+    try {
+        const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET_KEY)
+        const payload = {
+            id: decoded.id,
+            firstName: decoded.firstName,
+            lastName: decoded.lastName,
+            email: decoded.email,
+            username: decoded.username,
+            password: decoded.password,
+            isSuperUser: decoded.isSuperUser,
+            createdAt: decoded.createdAt,
+            updatedAt: decoded.updatedAt
+        }
+        const accessToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {expiresIn: '15m'})
+
+        res.status(200).json({
+            status: "OK",
+            data: {
+                accessToken
+            }
+        })
+    } catch (err) {
+        res
+            .status(err?.status || 500)
+            .send({status: 'FAILED', data: {error: err?.message || err}})
+    }
 }
 
 
