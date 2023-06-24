@@ -6,7 +6,7 @@ const prisma = new PrismaClient()
 
 const getAuthorList = async (req, res) => {
     const {page} = req.query
-    const recordsToSkip = page && page !== "1" ? (Number(page) - 1) * 10: 0
+    const recordsToSkip = page && page !== "1" ? (Number(page) - 1) * 10 : 0
 
 
     try {
@@ -92,7 +92,7 @@ const getAuthorBooks = async (req, res) => {
 
         const nextPageNum = page && authorBookCount > page * 10 ? Number(page) + 1 : null
         const prevPageNum = page && page !== "1" && page !== "0" ? Number(page) - 1 : null
-        
+
         const nextPageURL = nextPageNum ? `${req.protocol}://${req.get('host')}${req.baseUrl}/?page=${nextPageNum}` : null
         const prevPageURL = prevPageNum ? `${req.protocol}://${req.get('host')}${req.baseUrl}/?page=${prevPageNum}` : null
 
