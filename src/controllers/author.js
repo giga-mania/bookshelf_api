@@ -11,7 +11,7 @@ const getAuthorList = async (req, res) => {
 
     try {
         const authorCount = await prisma.author.count()
-        const authors = await prisma.book.findMany({
+        const authors = await prisma.author.findMany({
             skip: recordsToSkip,
             take: 10
         })
@@ -39,7 +39,33 @@ const getAuthorList = async (req, res) => {
 }
 
 const getSingleAuthor = async (req, res) => {
+    const {authorId} = req.params
 
+    try {
+        const author = await prisma.author.findUnique({
+            where: {
+                id: authorId
+            }
+        })
+
+        if(!author) {
+            return res.status(404).json({
+                status: "FAILED",
+                data: {
+                    error: "Author with provided id not found!"
+                }
+            })
+        }
+
+        res.status(200).json({
+            status: "OK",
+            data: author
+        })
+    } catch (err) {
+        res
+            .status(err?.status || 500)
+            .send({status: "FAILED", data: {error: err?.message || err}})
+    }
 }
 
 const getAuthorBooks = async (req, res) => {
