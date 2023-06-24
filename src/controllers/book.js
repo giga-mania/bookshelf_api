@@ -1,4 +1,5 @@
 import {PrismaClient} from "@prisma/client";
+import {getNextAndPrevPageRequestURLs} from "../utils/utils.js";
 
 
 const prisma = new PrismaClient()
@@ -15,12 +16,12 @@ const getBookList = async (req, res) => {
             take: 10
         })
 
+        const {nextPageURL, prevPageURL} = getNextAndPrevPageRequestURLs(page, bookCount, {
+            protocol: req.protocol,
+            host: req.get("host"),
+            baseUrl: req.baseUrl
+        })
 
-        const nextPageNum = page && bookCount > page * 10 ? Number(page) + 1 : null
-        const prevPageNum = page && page !== "1" && page !== "0" ? Number(page) - 1 : null
-
-        const nextPageURL = nextPageNum ? `${req.protocol}://${req.get('host')}${req.baseUrl}/?page=${nextPageNum}` : null
-        const prevPageURL = prevPageNum ? `${req.protocol}://${req.get('host')}${req.baseUrl}/?page=${prevPageNum}` : null
 
         res.status(200).json({
             status: "OK",

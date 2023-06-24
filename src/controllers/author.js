@@ -1,4 +1,5 @@
 import {PrismaClient} from "@prisma/client";
+import {getNextAndPrevPageRequestURLs} from "../utils/utils.js";
 
 
 const prisma = new PrismaClient()
@@ -16,11 +17,12 @@ const getAuthorList = async (req, res) => {
             take: 10
         })
 
-        const nextPageNum = page && authorCount > page * 10 ? Number(page) + 1 : null
-        const prevPageNum = page && page !== "1" && page !== "0" ? Number(page) - 1 : null
+        const {nextPageURL, prevPageURL} = getNextAndPrevPageRequestURLs(page, authorCount, {
+            protocol: req.protocol,
+            host: req.get("host"),
+            baseUrl: req.baseUrl
+        })
 
-        const nextPageURL = nextPageNum ? `${req.protocol}://${req.get('host')}${req.baseUrl}/?page=${nextPageNum}` : null
-        const prevPageURL = prevPageNum ? `${req.protocol}://${req.get('host')}${req.baseUrl}/?page=${prevPageNum}` : null
 
         res.status(200).json({
             status: "OK",
@@ -42,6 +44,7 @@ const getAuthorList = async (req, res) => {
 const getSingleAuthor = async (req, res) => {
     const {authorId} = req.params
 
+
     try {
         const author = await prisma.author.findUnique({
             where: {
@@ -49,7 +52,7 @@ const getSingleAuthor = async (req, res) => {
             }
         })
 
-        if(!author) {
+        if (!author) {
             return res.status(404).json({
                 status: "FAILED",
                 data: {
@@ -57,6 +60,7 @@ const getSingleAuthor = async (req, res) => {
                 }
             })
         }
+
 
         res.status(200).json({
             status: "OK",
@@ -72,7 +76,7 @@ const getSingleAuthor = async (req, res) => {
 const getAuthorBooks = async (req, res) => {
     const {authorId} = req.params
     const {page} = req.query
-    const recordsToSkip = page && page !== "1" ? (Number(page) - 1) * 10: 0
+    const recordsToSkip = page && page !== "1" ? (Number(page) - 1) * 10 : 0
 
 
     try {
@@ -90,11 +94,11 @@ const getAuthorBooks = async (req, res) => {
             }
         })
 
-        const nextPageNum = page && authorBookCount > page * 10 ? Number(page) + 1 : null
-        const prevPageNum = page && page !== "1" && page !== "0" ? Number(page) - 1 : null
-
-        const nextPageURL = nextPageNum ? `${req.protocol}://${req.get('host')}${req.baseUrl}/?page=${nextPageNum}` : null
-        const prevPageURL = prevPageNum ? `${req.protocol}://${req.get('host')}${req.baseUrl}/?page=${prevPageNum}` : null
+        const {nextPageURL, prevPageURL} = getNextAndPrevPageRequestURLs(page, authorBookCount, {
+            protocol: req.protocol,
+            host: req.get("host"),
+            baseUrl: req.baseUrl
+        })
 
 
         res.status(200).json({
