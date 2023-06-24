@@ -22,16 +22,16 @@ model User {
 }
 
 model Book {
-  id           String    @id @default(uuid())
-  title        String
-  description  String
-  language     String
-  publish_date DateTime?
-  author       Author    @relation(fields: [authorId], references: [id])
-  authorId     String
-  createdAt    DateTime  @default(now())
-  Note         Note[]
-  Event        Event?
+  id          String    @id @default(uuid())
+  title       String
+  description String
+  language    String
+  publishDate DateTime?
+  author      Author    @relation(fields: [authorId], references: [id])
+  authorId    String
+  createdAt   DateTime  @default(now())
+  Note        Note[]
+  Event       Event?
 }
 
 model Author {
