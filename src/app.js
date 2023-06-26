@@ -4,6 +4,7 @@ import userRouter from "./routes/user.js"
 import bookRouter from  "./routes/book.js"
 import authorRouter from "./routes/author.js"
 import noteRouter from "./routes/note.js"
+import eventRouter from "./routes/event.js"
 
 const app = express()
 
@@ -17,6 +18,7 @@ app.use('/api/user', userRouter)
 app.use('/api/book', bookRouter)
 app.use('/api/author', authorRouter)
 app.use('/api/note', noteRouter)
+app.use('/api/event', eventRouter)
 
 
 export default app
