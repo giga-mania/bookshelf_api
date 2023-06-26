@@ -99,7 +99,45 @@ const createEvent = async (req, res) => {
 }
 
 const updateEvent = async (req, res) => {
+    const {eventId} = req.params
+    const {eventDate} = req.body
 
+    try {
+        const event = await prisma.event.findUnique({
+            where: {
+                id: eventId
+            }
+        })
+
+        if (!event) {
+            return res.status(400).json({
+                status: 'FAILED',
+                data: {
+                    error: 'Event with provided id does not exist!'
+                }
+            })
+        }
+
+
+       const updatedEvent = await prisma.event.update({
+           where: {
+               id: eventId
+           },
+           data: {
+               ...req.body,
+               eventDate: eventDate ? new Date(eventDate) : event.eventDate
+           }
+       })
+
+        res.status(200).json({
+            status: 'OK',
+            data: updatedEvent
+        })
+    } catch (err) {
+        res
+            .status(err?.status || 500)
+            .send({status: 'FAILED', data: {error: err?.message || err}})
+    }
 }
 
 const deleteEvent = async (req, res) => {
