@@ -114,9 +114,35 @@ const deleteNote = async (req, res) => {
 
 
     try {
+        const noteToDelete = await prisma.note.findUnique({
+            where: {
+                id: noteId
+            }
+        })
 
+        if(!noteToDelete) {
+            return res.status(400).json({
+                status: 'FAIlED',
+                data: {
+                    error: 'Note with given id does not exist!'
+                }
+            })
+        }
+
+        await prisma.note.delete({
+            where: {
+                id: noteId
+            }
+        })
+
+        res.status(200).json({
+            status: 'OK',
+            data: `A note ${noteId} got deleted!`
+        })
     } catch (err) {
-
+        res
+            .status(err?.status || 500)
+            .send({status: "FAILED", data: {error: err?.message || err}})
     }
 }
 
