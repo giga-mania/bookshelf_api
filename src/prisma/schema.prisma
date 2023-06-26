@@ -57,7 +57,7 @@ model Note {
 model Event {
   id            String   @id @default(uuid())
   title         String   @db.VarChar(255)
-  evetDate      DateTime
+  eventDate     DateTime
   city          String   @db.VarChar(32)
   byInvitation  Boolean  @default(false)
   ageRegulation Boolean  @default(false)
