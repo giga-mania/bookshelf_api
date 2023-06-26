@@ -1,12 +1,12 @@
 import {Router} from "express";
+import {createNote, updateNote, deleteNote} from  "../controllers/note.js"
 
 
 const router = Router()
 
-router.post('book/:bookId', )
+router.post('/book/:bookId', createNote)
+router.put('/:noteId', updateNote)
+router.delete('/:noteId', deleteNote)
 
-router.put('/:nodeId', )
-
-router.delete('/:nodeId', )
 
 export default router
