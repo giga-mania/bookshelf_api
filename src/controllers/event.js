@@ -14,22 +14,24 @@ const getEvent = async (req, res) => {
             }
         })
 
-        if(!event) {
+        if (!event) {
             return res.status(400).json({
                 status: 'FAILED',
                 data: {
-                    error: 'Note with given id does not exist!'
+                    error: 'Event with given id does not exist!'
                 }
             })
         }
 
 
         res.status(200).json({
-            status: "OK",
+            status: 'OK',
             data: event
         })
     } catch (err) {
-
+        res
+            .status(err?.status || 500)
+            .send({status: 'FAILED', data: {error: err?.message || err}})
     }
 }
 
@@ -63,7 +65,7 @@ const createEvent = async (req, res) => {
             }
         })
 
-        if(existingEvent.length > 0) {
+        if (existingEvent.length > 0) {
             return res.status(400).json({
                 status: 'FAILED',
                 data: {
@@ -71,7 +73,6 @@ const createEvent = async (req, res) => {
                 }
             })
         }
-        console.log("reaches the skyyy")
 
         const newEvent = await prisma.event.create({
             data: {
@@ -87,14 +88,13 @@ const createEvent = async (req, res) => {
 
 
         res.status(200).json({
-            status: "OK",
+            status: 'OK',
             data: newEvent
         })
     } catch (err) {
-        console.log(err)
         res
             .status(err?.status || 500)
-            .send({status: "FAILED", data: {error: err?.message || err}})
+            .send({status: 'FAILED', data: {error: err?.message || err}})
     }
 }
 
@@ -103,7 +103,40 @@ const updateEvent = async (req, res) => {
 }
 
 const deleteEvent = async (req, res) => {
+    const {eventId} = req.params
 
+    try {
+        const eventToDelete = await prisma.event.findUnique({
+            where: {
+                id: eventId
+            }
+        })
+
+        if(!eventToDelete) {
+            return res.status(400).json({
+                status: 'FAILED',
+                data: {
+                    error: 'Event with given id does not exist!'
+                }
+            })
+        }
+
+
+        await prisma.event.delete({
+            where: {
+                id: eventId
+            }
+        })
+
+        res.status(200).json({
+            status: 'OK',
+            data: `Event ${eventId} got deleted!`
+        })
+    } catch (err) {
+        res
+            .status(err?.status || 500)
+            .send({status: 'FAILED', data: {error: err?.message || err}})
+    }
 }
 
 
