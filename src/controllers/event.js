@@ -5,8 +5,29 @@ import jwt from "jsonwebtoken";
 const prisma = new PrismaClient()
 
 const getEvent = async (req, res) => {
-    try {
+    const {eventId} = req.params
 
+    try {
+        const event = await prisma.event.findUnique({
+            where: {
+                id: eventId
+            }
+        })
+
+        if(!event) {
+            return res.status(400).json({
+                status: 'FAILED',
+                data: {
+                    error: 'Note with given id does not exist!'
+                }
+            })
+        }
+
+
+        res.status(200).json({
+            status: "OK",
+            data: event
+        })
     } catch (err) {
 
     }
