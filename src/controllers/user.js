@@ -1,6 +1,6 @@
 import {PrismaClient} from "@prisma/client";
 import jwt from "jsonwebtoken"
-import {hashPassword, verifyPassword, createToken} from "../utils/utils.js";
+import {createToken, hashPassword, verifyPassword} from "../utils/utils.js";
 
 const prisma = new PrismaClient()
 
@@ -108,8 +108,16 @@ const loginUser = async (req, res) => {
             })
         }
 
-        const accessToken = createToken(user, '15m')
-        const refreshToken = createToken(user, '1d')
+        const userInfo = {
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            username: user.username,
+            email: user.email,
+            isSuperUser: user.isSuperUser
+        }
+        const accessToken = createToken(userInfo, '15m')
+        const refreshToken = createToken(userInfo, '1d')
 
         res.cookie('jwt', refreshToken, {
             httpOnly: true,
@@ -146,19 +154,16 @@ const refreshToken = (req, res) => {
     }
 
     try {
-        const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET_KEY)
-        const payload = {
+        const decoded = jwt.decode(refreshToken)
+        const userInfo = {
             id: decoded.id,
             firstName: decoded.firstName,
             lastName: decoded.lastName,
             email: decoded.email,
             username: decoded.username,
-            password: decoded.password,
             isSuperUser: decoded.isSuperUser,
-            createdAt: decoded.createdAt,
-            updatedAt: decoded.updatedAt
         }
-        const accessToken = createToken(payload, '15m')
+        const accessToken = createToken(userInfo, '15m')
 
         res.status(200).json({
             status: "OK",
