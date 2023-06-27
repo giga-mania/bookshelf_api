@@ -17,36 +17,7 @@ const registerUser = async (req, res) => {
             })
         }
 
-        const emailUser = await prisma.user.findUnique({
-            where: {
-                email: email
-            }
-        })
-        if (emailUser) {
-            return res.status(400).json({
-                status: 'FAILED',
-                data: {
-                    error: 'User with this email already exists!'
-                }
-            })
-        }
-
-        const usernameUser = await prisma.user.findUnique({
-            where: {
-                username: username
-            }
-        })
-        if (usernameUser) {
-            return res.status(400).json({
-                status: 'FAILED',
-                data: {
-                    error: 'User with this username already exists!'
-                }
-            })
-        }
-
         const hashedPassword = await hashPassword(password)
-
         const newUser = await prisma.user.create({
             data: {
                 firstName: firstName,
