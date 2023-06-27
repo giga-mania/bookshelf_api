@@ -1,5 +1,5 @@
 import {PrismaClient} from "@prisma/client";
-import {getNextAndPrevPageRequestURLs} from "../utils/utils.js";
+import {getNextAndPrevPageRequestURLs, getPaginationOffset} from "../utils/utils.js";
 
 
 const prisma = new PrismaClient()
@@ -7,13 +7,13 @@ const prisma = new PrismaClient()
 
 const getAuthorList = async (req, res) => {
     const {page} = req.query
-    const recordsToSkip = page && page !== "1" ? (Number(page) - 1) * 10 : 0
+    const paginationOffset = getPaginationOffset(page, 10)
 
 
     try {
         const authorCount = await prisma.author.count()
         const authors = await prisma.author.findMany({
-            skip: recordsToSkip,
+            skip: paginationOffset,
             take: 10
         })
 
@@ -76,7 +76,7 @@ const getSingleAuthor = async (req, res) => {
 const getAuthorBooks = async (req, res) => {
     const {authorId} = req.params
     const {page} = req.query
-    const recordsToSkip = page && page !== "1" ? (Number(page) - 1) * 10 : 0
+    const paginationOffset = getPaginationOffset(page, 10)
 
 
     try {
@@ -87,7 +87,7 @@ const getAuthorBooks = async (req, res) => {
         })
 
         const authorBooks = await prisma.book.findMany({
-            skip: recordsToSkip,
+            skip: paginationOffset,
             take: 10,
             where: {
                 authorId: authorId

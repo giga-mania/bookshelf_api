@@ -37,9 +37,14 @@ const getNextAndPrevPageRequestURLs = (page, recordCount, URL) => {
     }
 }
 
+const getPaginationOffset = (page, limit) => {
+    return page && page !== "1" ? (Number(page) - 1) * limit : 0
+}
+
 export {
     hashPassword,
     verifyPassword,
     createToken,
-    getNextAndPrevPageRequestURLs
+    getNextAndPrevPageRequestURLs,
+    getPaginationOffset
 }
