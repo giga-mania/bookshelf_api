@@ -11,11 +11,16 @@ const verifyPassword = async (password, hash) => {
 }
 
 const createToken = (payload, expTime) => {
-    return jwt.sign({
-        ...payload,
-        issuer: 'api.bookshelf',
-        audience: 'api.bookshelf'
-    }, process.env.JWT_SECRET_KEY, {expiresIn: expTime})
+    return jwt.sign(
+        payload,
+        process.env.JWT_SECRET_KEY,
+        {
+            expiresIn: expTime,
+            algorithm: 'HS256',
+            audience: 'api.bookshelf',
+            issuer: 'api.bookshelf'
+        }
+    )
 }
 
 const getNextAndPrevPageRequestURLs = (page, recordCount, URL) => {
