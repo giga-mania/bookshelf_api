@@ -17,8 +17,9 @@ const createToken = (payload, expTime) => {
         {
             expiresIn: expTime,
             algorithm: 'HS256',
+            subject: payload.id,
             audience: 'api.bookshelf',
-            issuer: 'api.bookshelf'
+            issuer: 'api.bookshelf',
         }
     )
 }
