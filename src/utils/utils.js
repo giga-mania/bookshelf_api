@@ -24,7 +24,7 @@ const createToken = (payload, expTime) => {
     )
 }
 
-const getNextAndPrevPageRequestURLs = (page, recordCount, URL) => {
+const getNextAndPrevPageRequestURLs = (page = "1", recordCount, URL) => {
     const nextPageNum = page && recordCount > page * 10 ? Number(page) + 1 : null
     const prevPageNum = page && page !== "1" && page !== "0" ? Number(page) - 1 : null
 
