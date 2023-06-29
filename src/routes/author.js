@@ -1,5 +1,5 @@
 import {Router} from "express"
-import {getAuthorList, getSingleAuthor, getAuthorBooks } from "../controllers/author.js"
+import {getAuthorList, getSingleAuthor, getAuthorBooks } from "../controllers/author.controller.js"
 
 
 const router = Router()

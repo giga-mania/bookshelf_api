@@ -1,5 +1,5 @@
 import {Router} from "express";
-import {loginUser, refreshToken, registerUser} from "../controllers/user.js"
+import {loginUser, refreshToken, registerUser} from "../controllers/user.controller.js"
 import checkDuplicateUserCredentials from "../middleware/checkDuplicateUserCredentials.js";
 
 
