@@ -20,7 +20,7 @@ const catchError = (err, res) => {
     })
 }
 
-const authenticateToken = (req, res, next) => {
+const authenticateTokenMiddleware = (req, res, next) => {
     const token = req.headers.authorization.slice(7);
 
     if(!token) {
@@ -43,4 +43,4 @@ const authenticateToken = (req, res, next) => {
 }
 
 
-export default authenticateToken
+export default authenticateTokenMiddleware

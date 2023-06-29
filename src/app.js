@@ -5,7 +5,7 @@ import bookRouter from "./routes/book.route.js"
 import authorRouter from "./routes/author.route.js"
 import noteRouter from "./routes/note.route.js"
 import eventRouter from "./routes/event.route.js"
-import authenticateToken from "./middleware/authenticateToken.js";
+import authenticateTokenMiddleware from "./middleware/authenticateToken.middleware.js";
 
 const app = express()
 
@@ -16,7 +16,7 @@ app.use(cookieParser())
 
 
 app.use('/api/user', userRouter)
-app.use(authenticateToken)
+app.use(authenticateTokenMiddleware)
 app.use('/api/book', bookRouter)
 app.use('/api/author', authorRouter)
 app.use('/api/note', noteRouter)

@@ -3,7 +3,7 @@ import {PrismaClient} from "@prisma/client"
 
 const prisma = new PrismaClient()
 
-const checkDuplicateUserCredentials = async (req, res, next) => {
+const checkDuplicateUserCredentialsMiddleware = async (req, res, next) => {
     const {username, email} = req.body
 
     try {
@@ -45,4 +45,4 @@ const checkDuplicateUserCredentials = async (req, res, next) => {
 }
 
 
-export default checkDuplicateUserCredentials
+export default checkDuplicateUserCredentialsMiddleware
