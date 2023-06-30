@@ -1,8 +1,6 @@
-import {PrismaClient} from "@prisma/client";
 import jwt from "jsonwebtoken";
+import noteService from "../services/note.service.js";
 
-
-const prisma = new PrismaClient()
 
 const createNote = async (req, res) => {
     const {text} = req.body
@@ -10,52 +8,13 @@ const createNote = async (req, res) => {
     const {id: userId} = jwt.verify(req.cookies.jwt, process.env.JWT_SECRET_KEY)
 
     try {
-        const book = await prisma.book.findUnique({
-            where: {
-                id: bookId
-            }
-        })
-
-        if (!book) {
-            return res.status(400).json({
-                status: 'FAILED',
-                data: {
-                    error: 'Instance of a book with given id does not exist!'
-                }
-            })
-        }
-
-
-        const existingNote = await prisma.note.findMany({
-            where: {
-                bookId,
-                userId
-            }
-        })
-
-        if (existingNote.length) {
-            return res.status(400).json({
-                status: 'FAILED',
-                data: {
-                    error: 'Note for this book already exists!'
-                }
-            })
-        }
-
-
-        const note = await prisma.note.create({
-            data: {
-                bookId,
-                userId,
-                text
-            },
-        })
-
+        const newNote = await noteService.createNote({userId, bookId, text})
+        console.log(newNote)
         res.status(200).json({
             status: 'OK',
             data: {
-                id: note.id,
-                text: note.text
+                id: newNote.id,
+                text: newNote.text
             }
         })
     } catch (err) {
@@ -70,36 +29,13 @@ const updateNote = async (req, res) => {
     const {text} = req.body
 
     try {
-        const noteToUpdate = await prisma.note.findUnique({
-            where: {
-                id: noteId
-            }
-        })
-
-        if (!noteToUpdate) {
-            return res.status(400).json({
-                status: 'FAIlED',
-                data: {
-                    error: 'Note with given id does not exist!'
-                }
-            })
-        }
-
-        const updatedNotes = await prisma.note.update({
-            where: {
-                id: noteId
-            },
-            data: {
-                text
-            }
-        })
-
+        const updatedNote = await noteService.updateNote({noteId, text})
 
         res.status(200).json({
             status: "OK",
             data: {
-                id: updatedNotes.id,
-                text: updatedNotes.text
+                id: updatedNote.id,
+                text: updatedNote.text
             }
         })
     } catch (err) {
@@ -112,28 +48,8 @@ const updateNote = async (req, res) => {
 const deleteNote = async (req, res) => {
     const {noteId} = req.params
 
-
     try {
-        const noteToDelete = await prisma.note.findUnique({
-            where: {
-                id: noteId
-            }
-        })
-
-        if(!noteToDelete) {
-            return res.status(400).json({
-                status: 'FAIlED',
-                data: {
-                    error: 'Note with given id does not exist!'
-                }
-            })
-        }
-
-        await prisma.note.delete({
-            where: {
-                id: noteId
-            }
-        })
+        await noteService.deleteNote(noteId)
 
         res.status(200).json({
             status: 'OK',
