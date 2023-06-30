@@ -21,7 +21,7 @@ const catchError = (err, res) => {
 }
 
 const authenticateTokenMiddleware = (req, res, next) => {
-    const token = req.headers.authorization.slice(7);
+    const token = req.headers.authorization?.slice(7);
 
     if(!token) {
         return res.status(400).json({
