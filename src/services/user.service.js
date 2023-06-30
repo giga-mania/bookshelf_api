@@ -26,7 +26,7 @@ const registerUser = async ({firstName, lastName, username, email, password, pas
 }
 
 
-const loginsUser = async ({username, password}) => {
+const loginUser = async ({username, password}) => {
     if (!username || !password) {
         throw {
             status: 400,
@@ -92,6 +92,6 @@ const refreshToken = (token) => {
 
 export default {
     registerUser,
-    loginsUser,
+    loginUser,
     refreshToken
 }

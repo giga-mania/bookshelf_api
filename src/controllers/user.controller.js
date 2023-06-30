@@ -19,7 +19,7 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
     try {
-        const {accessToken, refreshToken} = await userService.loginsUser(req.body)
+        const {accessToken, refreshToken} = await userService.loginUser(req.body)
 
         res.cookie('jwt', refreshToken, {
             httpOnly: true,
