@@ -1,27 +1,13 @@
-import {PrismaClient} from "@prisma/client";
 import jwt from "jsonwebtoken";
+import eventService from "../services/event.service.js"
 
 
-const prisma = new PrismaClient()
 
 const getEvent = async (req, res) => {
     const {eventId} = req.params
 
     try {
-        const event = await prisma.event.findUnique({
-            where: {
-                id: eventId
-            }
-        })
-
-        if (!event) {
-            return res.status(400).json({
-                status: 'FAILED',
-                data: {
-                    error: 'Event with given id does not exist!'
-                }
-            })
-        }
+        const event = await eventService.getEvent(eventId)
 
 
         res.status(200).json({
@@ -42,50 +28,15 @@ const createEvent = async (req, res) => {
 
 
     try {
-        const book = await prisma.book.findUnique({
-            where: {
-                id: bookId
-            }
+        const newEvent = await eventService.createEvent({
+            bookId,
+            userId,
+            title,
+            city,
+            eventDate,
+            byInvitation,
+            ageRegulation
         })
-
-        if (!book) {
-            return res.status(400).json({
-                status: 'FAILED',
-                data: {
-                    error: 'Instance of a book with given id does not exist!'
-                }
-            })
-        }
-
-
-        const existingEvent = await prisma.event.findMany({
-            where: {
-                bookId,
-                userId
-            }
-        })
-
-        if (existingEvent.length > 0) {
-            return res.status(400).json({
-                status: 'FAILED',
-                data: {
-                    error: 'Event for this book already exists!'
-                }
-            })
-        }
-
-        const newEvent = await prisma.event.create({
-            data: {
-                title,
-                city,
-                eventDate: new Date(eventDate),
-                byInvitation,
-                ageRegulation,
-                bookId,
-                userId
-            }
-        })
-
 
         res.status(200).json({
             status: 'OK',
@@ -98,36 +49,12 @@ const createEvent = async (req, res) => {
     }
 }
 
+
 const updateEvent = async (req, res) => {
     const {eventId} = req.params
-    const {eventDate} = req.body
 
     try {
-        const event = await prisma.event.findUnique({
-            where: {
-                id: eventId
-            }
-        })
-
-        if (!event) {
-            return res.status(400).json({
-                status: 'FAILED',
-                data: {
-                    error: 'Event with provided id does not exist!'
-                }
-            })
-        }
-
-
-       const updatedEvent = await prisma.event.update({
-           where: {
-               id: eventId
-           },
-           data: {
-               ...req.body,
-               eventDate: eventDate ? new Date(eventDate) : event.eventDate
-           }
-       })
+        const updatedEvent = await eventService.updateEvent({eventId, eventBody: req.body})
 
         res.status(200).json({
             status: 'OK',
@@ -144,27 +71,7 @@ const deleteEvent = async (req, res) => {
     const {eventId} = req.params
 
     try {
-        const eventToDelete = await prisma.event.findUnique({
-            where: {
-                id: eventId
-            }
-        })
-
-        if(!eventToDelete) {
-            return res.status(400).json({
-                status: 'FAILED',
-                data: {
-                    error: 'Event with given id does not exist!'
-                }
-            })
-        }
-
-
-        await prisma.event.delete({
-            where: {
-                id: eventId
-            }
-        })
+        await eventService.deleteEvent(eventId)
 
         res.status(200).json({
             status: 'OK',
