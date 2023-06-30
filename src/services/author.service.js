@@ -79,11 +79,8 @@ const getAuthorBooks = async ({page, authorId, protocol, host, baseUrl}) => {
 }
 
 
-const authorService = {
+export default {
     getAuthorList,
     getSingleAuthor,
     getAuthorBooks
 }
-
-
-export default authorService

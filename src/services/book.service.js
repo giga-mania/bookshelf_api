@@ -83,10 +83,8 @@ const getBookTags = async () => {
 }
 
 
-const bookService = {
+export default {
     getBookList,
     getSingleBook,
     getBookTags
 }
-
-export default bookService

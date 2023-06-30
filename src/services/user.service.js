@@ -90,10 +90,8 @@ const refreshToken = (token) => {
 }
 
 
-const userService = {
+export default {
     registerUser,
     loginsUser,
     refreshToken
 }
-
-export default userService
