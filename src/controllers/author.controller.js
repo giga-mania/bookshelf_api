@@ -1,28 +1,15 @@
-import {PrismaClient} from "@prisma/client";
-import {getNextAndPrevPageRequestURLs, getPaginationOffset} from "../utils/utils.js";
-
-
-const prisma = new PrismaClient()
+import authorService from "../services/author.service.js"
+import {getPaginationOffset} from "../utils/utils.js";
 
 
 const getAuthorList = async (req, res) => {
-    const {page} = req.query
-    const paginationOffset = getPaginationOffset(page, 10)
-
-
     try {
-        const authorCount = await prisma.author.count()
-        const authors = await prisma.author.findMany({
-            skip: paginationOffset,
-            take: 10
-        })
-
-        const {nextPageURL, prevPageURL} = getNextAndPrevPageRequestURLs(page, authorCount, {
+        const {authorCount, authors, nextPageURL, prevPageURL} = await authorService.getAuthorList({
+            page: req.query.page,
             protocol: req.protocol,
-            host: req.get("host"),
+            host: req.get('host'),
             baseUrl: req.baseUrl
         })
-
 
         res.status(200).json({
             status: "OK",
@@ -46,21 +33,7 @@ const getSingleAuthor = async (req, res) => {
 
 
     try {
-        const author = await prisma.author.findUnique({
-            where: {
-                id: authorId
-            }
-        })
-
-        if (!author) {
-            return res.status(404).json({
-                status: "FAILED",
-                data: {
-                    error: "Author with provided id not found!"
-                }
-            })
-        }
-
+        const author = await authorService.getSingleAuthor(authorId)
 
         res.status(200).json({
             status: "OK",
@@ -74,32 +47,14 @@ const getSingleAuthor = async (req, res) => {
 }
 
 const getAuthorBooks = async (req, res) => {
-    const {authorId} = req.params
-    const {page} = req.query
-    const paginationOffset = getPaginationOffset(page, 10)
-
-
     try {
-        const authorBookCount = await prisma.book.count({
-            where: {
-                authorId: authorId
-            }
-        })
-
-        const authorBooks = await prisma.book.findMany({
-            skip: paginationOffset,
-            take: 10,
-            where: {
-                authorId: authorId
-            }
-        })
-
-        const {nextPageURL, prevPageURL} = getNextAndPrevPageRequestURLs(page, authorBookCount, {
+        const {authorBookCount, authorBooks, prevPageURL, nextPageURL} = await authorService.getAuthorBooks({
+            page: req.query.page,
+            authorId: req.params.authorId,
             protocol: req.protocol,
-            host: req.get("host"),
+            host: req.get('host'),
             baseUrl: req.baseUrl
         })
-
 
         res.status(200).json({
             status: "OK",
