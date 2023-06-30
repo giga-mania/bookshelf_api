@@ -1,63 +1,15 @@
-import {PrismaClient} from "@prisma/client";
-import {getNextAndPrevPageRequestURLs, getPaginationOffset} from "../utils/utils.js";
-
-
-const prisma = new PrismaClient()
+import bookService from "../services/book.service.js";
 
 
 const getBookList = async (req, res) => {
-    const {page, tags} = req.query
-    const paginationOffset = getPaginationOffset(page, 10)
-
     try {
-        if (tags) {
-            const filteredBooksCount = await prisma.book.count({
-                where: {tag: {some: {id: {in: tags.split(',')}}}}
-            })
-            const filteredBooks = await prisma.book.findMany({
-                skip: paginationOffset,
-                take: 10,
-                where: {
-                    tag: {
-                        some: {
-                            id: {
-                                in: tags.split(',')
-                            }
-                        }
-                    }
-                }
-            })
-
-            const {nextPageURL, prevPageURL} = getNextAndPrevPageRequestURLs(page, filteredBooksCount, {
-                protocol: req.protocol,
-                host: req.get("host"),
-                baseUrl: req.baseUrl
-            })
-
-            return res.status(200).json({
-                status: "OK",
-                data: {
-                    count: filteredBooks.length,
-                    next: nextPageURL,
-                    prev: prevPageURL,
-                    results: filteredBooks
-                }
-            })
-        }
-
-
-        const bookCount = await prisma.book.count()
-        const books = await prisma.book.findMany({
-            skip: paginationOffset,
-            take: 10
-        })
-
-        const {nextPageURL, prevPageURL} = getNextAndPrevPageRequestURLs(page, bookCount, {
+        const {bookCount, books, nextPageURL, prevPageURL} = await bookService.getBookList({
+            page: req.query.page,
+            tags: req.query.tags,
             protocol: req.protocol,
-            host: req.get("host"),
+            host: req.get('host'),
             baseUrl: req.baseUrl
         })
-
 
         res.status(200).json({
             status: "OK",
@@ -75,25 +27,11 @@ const getBookList = async (req, res) => {
     }
 }
 
-const getSingeBook = async (req, res) => {
+const getSingleBook = async (req, res) => {
     const {bookId} = req.params
 
     try {
-        const book = await prisma.book.findUnique({
-            where: {
-                id: bookId
-            }
-        })
-
-        if (!book) {
-            return res.status(404).json({
-                status: "FAILED",
-                data: {
-                    error: "Book with provided id not found!"
-                }
-            })
-        }
-
+        const book = await bookService.getSingleBook(bookId)
 
         res.status(200).json({
             status: "OK",
@@ -108,7 +46,7 @@ const getSingeBook = async (req, res) => {
 
 const getBookTags = async (req, res) => {
     try {
-        const bookTags = await prisma.tag.findMany()
+        const bookTags = await bookService.getBookTags()
 
         res.status(200).json({
             status: "OK",
@@ -124,6 +62,6 @@ const getBookTags = async (req, res) => {
 
 export {
     getBookList,
-    getSingeBook,
+    getSingleBook,
     getBookTags
 }

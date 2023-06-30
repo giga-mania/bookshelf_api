@@ -1,5 +1,4 @@
 import authorService from "../services/author.service.js"
-import {getPaginationOffset} from "../utils/utils.js";
 
 
 const getAuthorList = async (req, res) => {

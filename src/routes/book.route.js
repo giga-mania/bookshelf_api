@@ -1,12 +1,12 @@
 import {Router} from  "express"
-import {getSingeBook, getBookList, getBookTags} from "../controllers/book.controller.js"
+import {getSingleBook, getBookList, getBookTags} from "../controllers/book.controller.js"
 
 
 const router = Router()
 
 router.get('/', getBookList)
 router.get('/tags', getBookTags)
-router.get('/:bookId', getSingeBook)
+router.get('/:bookId', getSingleBook)
 
 
 export default router
