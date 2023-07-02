@@ -1,7 +1,7 @@
 import bookService from "../services/book.service.js";
 
 
-const getBookList = async (req, res) => {
+const getBookList = async (req, res, next) => {
     try {
         const {bookCount, books, nextPageURL, prevPageURL} = await bookService.getBookList({
             page: req.query.page,
@@ -21,13 +21,11 @@ const getBookList = async (req, res) => {
             }
         })
     } catch (err) {
-        res
-            .status(err?.status || 500)
-            .send({status: "FAILED", data: {error: err?.message || err}})
+        next(err)
     }
 }
 
-const getSingleBook = async (req, res) => {
+const getSingleBook = async (req, res, next) => {
     const {bookId} = req.params
 
     try {
@@ -38,13 +36,11 @@ const getSingleBook = async (req, res) => {
             data: book
         })
     } catch (err) {
-        res
-            .status(err?.status || 500)
-            .send({status: "FAILED", data: {error: err?.message || err}})
+        next(err)
     }
 }
 
-const getBookTags = async (req, res) => {
+const getBookTags = async (req, res, next) => {
     try {
         const bookTags = await bookService.getBookTags()
 
@@ -53,9 +49,7 @@ const getBookTags = async (req, res) => {
             data: bookTags
         })
     } catch (err) {
-        res
-            .status(err?.status || 500)
-            .send({status: "FAILED", data: {error: err?.message || err}})
+        next(err)
     }
 }
 

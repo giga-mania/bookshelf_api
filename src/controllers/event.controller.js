@@ -2,8 +2,7 @@ import jwt from "jsonwebtoken";
 import eventService from "../services/event.service.js"
 
 
-
-const getEvent = async (req, res) => {
+const getEvent = async (req, res, next) => {
     const {eventId} = req.params
 
     try {
@@ -15,13 +14,11 @@ const getEvent = async (req, res) => {
             data: event
         })
     } catch (err) {
-        res
-            .status(err?.status || 500)
-            .send({status: 'FAILED', data: {error: err?.message || err}})
+        next(err)
     }
 }
 
-const createEvent = async (req, res) => {
+const createEvent = async (req, res, next) => {
     const {bookId} = req.params
     const {id: userId} = jwt.decode(req.cookies.jwt)
     const {eventDate, title, city, byInvitation, ageRegulation} = req.body
@@ -43,14 +40,12 @@ const createEvent = async (req, res) => {
             data: newEvent
         })
     } catch (err) {
-        res
-            .status(err?.status || 500)
-            .send({status: 'FAILED', data: {error: err?.message || err}})
+        next(err)
     }
 }
 
 
-const updateEvent = async (req, res) => {
+const updateEvent = async (req, res, next) => {
     const {eventId} = req.params
 
     try {
@@ -61,13 +56,11 @@ const updateEvent = async (req, res) => {
             data: updatedEvent
         })
     } catch (err) {
-        res
-            .status(err?.status || 500)
-            .send({status: 'FAILED', data: {error: err?.message || err}})
+        next(err)
     }
 }
 
-const deleteEvent = async (req, res) => {
+const deleteEvent = async (req, res, next) => {
     const {eventId} = req.params
 
     try {
@@ -78,9 +71,7 @@ const deleteEvent = async (req, res) => {
             data: `Event ${eventId} got deleted!`
         })
     } catch (err) {
-        res
-            .status(err?.status || 500)
-            .send({status: 'FAILED', data: {error: err?.message || err}})
+        next(err)
     }
 }
 

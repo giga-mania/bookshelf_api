@@ -1,7 +1,7 @@
 import authorService from "../services/author.service.js"
 
 
-const getAuthorList = async (req, res) => {
+const getAuthorList = async (req, res, next) => {
     try {
         const {authorCount, authors, nextPageURL, prevPageURL} = await authorService.getAuthorList({
             page: req.query.page,
@@ -20,14 +20,12 @@ const getAuthorList = async (req, res) => {
             }
         })
     } catch (err) {
-        res
-            .status(err?.status || 500)
-            .send({status: "FAILED", data: {error: err?.message || err}})
+        next(err)
     }
 }
 
 
-const getSingleAuthor = async (req, res) => {
+const getSingleAuthor = async (req, res, next) => {
     const {authorId} = req.params
 
 
@@ -39,13 +37,11 @@ const getSingleAuthor = async (req, res) => {
             data: author
         })
     } catch (err) {
-        res
-            .status(err?.status || 500)
-            .send({status: "FAILED", data: {error: err?.message || err}})
+        next(err)
     }
 }
 
-const getAuthorBooks = async (req, res) => {
+const getAuthorBooks = async (req, res, next) => {
     try {
         const {authorBookCount, authorBooks, prevPageURL, nextPageURL} = await authorService.getAuthorBooks({
             page: req.query.page,
@@ -65,9 +61,7 @@ const getAuthorBooks = async (req, res) => {
             }
         })
     } catch (err) {
-        res
-            .status(err?.status || 500)
-            .send({status: "FAILED", data: {error: err?.message || err}})
+        next(err)
     }
 }
 

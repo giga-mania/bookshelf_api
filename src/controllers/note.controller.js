@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import noteService from "../services/note.service.js";
 
 
-const createNote = async (req, res) => {
+const createNote = async (req, res, next) => {
     const {text} = req.body
     const {bookId} = req.params
     const {id: userId} = jwt.verify(req.cookies.jwt, process.env.JWT_SECRET_KEY)
@@ -18,13 +18,11 @@ const createNote = async (req, res) => {
             }
         })
     } catch (err) {
-        res
-            .status(err?.status || 500)
-            .send({status: "FAILED", data: {error: err?.message || err}})
+        next(err)
     }
 }
 
-const updateNote = async (req, res) => {
+const updateNote = async (req, res, next) => {
     const {noteId} = req.params
     const {text} = req.body
 
@@ -39,13 +37,11 @@ const updateNote = async (req, res) => {
             }
         })
     } catch (err) {
-        res
-            .status(err?.status || 500)
-            .send({status: "FAILED", data: {error: err?.message || err}})
+       next(err)
     }
 }
 
-const deleteNote = async (req, res) => {
+const deleteNote = async (req, res, next) => {
     const {noteId} = req.params
 
     try {
@@ -56,9 +52,7 @@ const deleteNote = async (req, res) => {
             data: `A note ${noteId} got deleted!`
         })
     } catch (err) {
-        res
-            .status(err?.status || 500)
-            .send({status: "FAILED", data: {error: err?.message || err}})
+        next(err)
     }
 }
 
