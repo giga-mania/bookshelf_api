@@ -1,4 +1,6 @@
 import {PrismaClient} from "@prisma/client";
+import Api404Error from "../errors/api404.error.js";
+import Api400Error from "../errors/api400.error.js";
 
 
 const prisma = new PrismaClient()
@@ -11,10 +13,7 @@ const getEvent = async (eventId) => {
     })
 
     if (!event) {
-        throw {
-            status: 404,
-            message: 'Event with given id does not exist!'
-        }
+        throw new Api404Error("Event with given id does not exist!")
     }
 
     return event
@@ -29,10 +28,7 @@ const createEvent = async ({bookId, userId, eventDate, title, city, byInvitation
     })
 
     if (!book) {
-        throw {
-            status: 404,
-            message: 'Instance of a book with given id does not exist!'
-        }
+        throw new Api404Error('Instance of a book with given id does not exist!')
     }
 
     const existingEvent = await prisma.event.findMany({
@@ -43,10 +39,7 @@ const createEvent = async ({bookId, userId, eventDate, title, city, byInvitation
     })
 
     if (existingEvent.length > 0) {
-        throw {
-            status: 400,
-            message: 'Event for this book already exists!'
-        }
+        throw new Api400Error('Event for this book already exists!')
     }
 
     return prisma.event.create({
@@ -73,10 +66,7 @@ const updateEvent = async ({eventId, eventBody}) => {
     })
 
     if (!event) {
-        throw {
-            status: 404,
-            message: 'Event with provided id does not exist!'
-        }
+        throw Api404Error('Event with provided id does not exist!')
     }
 
 
@@ -100,10 +90,7 @@ const deleteEvent = async (eventId) => {
     })
 
     if (!eventToDelete) {
-        throw {
-            status: 404,
-            message: 'Event with given id does not exist!'
-        }
+        throw Api404Error('Event with given id does not exist!')
     }
 
     await prisma.event.delete({

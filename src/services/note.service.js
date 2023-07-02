@@ -1,4 +1,6 @@
 import {PrismaClient} from "@prisma/client";
+import Api400Error from "../errors/api400.error.js";
+import Api404Error from "../errors/api404.error.js";
 
 
 const prisma = new PrismaClient()
@@ -11,10 +13,7 @@ const createNote = async ({bookId, text, userId}) => {
     })
 
     if (!book) {
-        throw {
-            status: 404,
-            message: 'Instance of a book with given id does not exist!'
-        }
+        throw new Api404Error('Instance of a book with given id does not exist!')
     }
 
     const existingNote = await prisma.note.findMany({
@@ -25,10 +24,7 @@ const createNote = async ({bookId, text, userId}) => {
     })
 
     if (existingNote.length) {
-        throw {
-            status: 400,
-            message: 'Note for this book already exists!'
-        }
+        throw new Api400Error('Note for this book already exists!')
     }
 
     return prisma.note.create({
@@ -49,10 +45,7 @@ const updateNote = async ({noteId, text}) => {
     })
 
     if (!noteToUpdate) {
-        throw {
-            status: 404,
-            message: 'Note with given id does not exist!'
-        }
+        throw new Api404Error('Note with given id does not exist!')
     }
 
     return prisma.note.update({
@@ -74,10 +67,7 @@ const deleteNote = async (noteId) => {
     })
 
     if (!noteToDelete) {
-        throw {
-            status: 404,
-            message: 'Note with given id does not exist!'
-        }
+        throw new Api404Error("Note with given id does not exist!")
     }
 
     await prisma.note.delete({

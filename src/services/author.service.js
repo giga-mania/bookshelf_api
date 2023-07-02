@@ -1,4 +1,5 @@
 import {PrismaClient} from "@prisma/client";
+import Api404Error from "../errors/api404.error.js";
 import {getNextAndPrevPageRequestURLs, getPaginationOffset} from "../utils/utils.js";
 
 
@@ -37,10 +38,7 @@ const getSingleAuthor = async (authorId) => {
     })
 
     if (!author) {
-        throw {
-            status: 404,
-            message: 'Author with provided id not found'
-        }
+        throw new Api404Error("Author with provided id weren't found!")
     }
 
     return author

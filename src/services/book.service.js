@@ -1,4 +1,5 @@
 import {PrismaClient} from "@prisma/client";
+import Api404Error from "../errors/api404.error.js";
 import {getNextAndPrevPageRequestURLs, getPaginationOffset} from "../utils/utils.js";
 
 
@@ -69,10 +70,7 @@ const getSingleBook = async (bookId) => {
     })
 
     if (!book) {
-        throw {
-            status: 404,
-            message: "Book with provided id not found!"
-        }
+        throw new Api404Error("Book with provided id weren't found!")
     }
 
     return book

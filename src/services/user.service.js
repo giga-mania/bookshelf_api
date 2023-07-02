@@ -3,7 +3,7 @@ import {createToken, hashPassword, verifyPassword} from "../utils/utils.js";
 import jwt from "jsonwebtoken";
 import Api400Error from "../errors/api400.error.js";
 import Api404Error from "../errors/api404.error.js";
-import api401Error from "../errors/api401.error.js";
+import Api401Error from "../errors/api401.error.js";
 
 
 const prisma = new PrismaClient()
@@ -71,7 +71,7 @@ const loginUser = async ({username, password}) => {
 
 const refreshToken = (token) => {
     if (!token) {
-        throw new api401Error("Refresh token weren't provided!")
+        throw new Api401Error("Refresh token weren't provided!")
     }
 
     const decoded = jwt.decode(token)
