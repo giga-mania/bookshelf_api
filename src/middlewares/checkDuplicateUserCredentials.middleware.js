@@ -1,4 +1,5 @@
 import {PrismaClient} from "@prisma/client"
+import Api400Error from "../errors/api400.error.js";
 
 
 const prisma = new PrismaClient()
@@ -13,12 +14,7 @@ const checkDuplicateUserCredentialsMiddleware = async (req, res, next) => {
             }
         })
         if (emailUser) {
-            return res.status(400).json({
-                status: 'FAILED',
-                data: {
-                    error: 'User with this email already exists!'
-                }
-            })
+            throw new Api400Error('User with this email already exists!')
         }
 
 
@@ -28,19 +24,12 @@ const checkDuplicateUserCredentialsMiddleware = async (req, res, next) => {
             }
         })
         if (usernameUser) {
-            return res.status(400).json({
-                status: 'FAILED',
-                data: {
-                    error: 'User with this username already exists!'
-                }
-            })
+            throw new Api400Error('User with this username already exists!')
         }
 
         next()
     } catch (err) {
-        res
-            .status(err?.status || 500)
-            .send({status: "FAILED", data: {error: err?.message || err}})
+        next(err)
     }
 }
 
