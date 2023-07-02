@@ -1,7 +1,7 @@
 import userService from "../services/user.service.js"
 
 
-const registerUser = async (req, res) => {
+const registerUser = async (req, res, next) => {
     try {
         const newUser = await userService.registerUser(req.body)
 
@@ -10,14 +10,12 @@ const registerUser = async (req, res) => {
             data: newUser
         })
     } catch (err) {
-        res
-            .status(err?.status || 500)
-            .send({status: "FAILED", data: {error: err.message}})
+        next(err)
     }
 }
 
 
-const loginUser = async (req, res) => {
+const loginUser = async (req, res, next) => {
     try {
         const {accessToken, refreshToken} = await userService.loginUser(req.body)
 
@@ -36,24 +34,13 @@ const loginUser = async (req, res) => {
             }
         })
     } catch (err) {
-        res
-            .status(err?.status || 500)
-            .send({status: "FAILED", data: {error: err?.message || err}})
+        next(err)
     }
 }
 
 
-const refreshToken = (req, res) => {
+const refreshToken = (req, res, next) => {
     const refreshToken = req.cookies?.jwt
-
-    if (!refreshToken) {
-        return res.status(401).json({
-            status: 'FAILED',
-            data: {
-                error: "Refresh token weren't provided!"
-            }
-        })
-    }
 
     try {
         const accessToken = userService.refreshToken(refreshToken)
@@ -65,9 +52,7 @@ const refreshToken = (req, res) => {
             }
         })
     } catch (err) {
-        res
-            .status(err?.status || 500)
-            .send({status: 'FAILED', data: {error: err?.message || err}})
+        next(err)
     }
 }
 

@@ -1,16 +1,16 @@
 import {PrismaClient} from "@prisma/client"
 import {createToken, hashPassword, verifyPassword} from "../utils/utils.js";
 import jwt from "jsonwebtoken";
+import Api400Error from "../errors/api400.error.js";
+import Api404Error from "../errors/api404.error.js";
+import api401Error from "../errors/api401.error.js";
 
 
 const prisma = new PrismaClient()
 
 const registerUser = async ({firstName, lastName, username, email, password, passwordRepeat}) => {
     if (password !== passwordRepeat) {
-        throw {
-            status: 400,
-            message: 'Provided password don\'t match'
-        }
+        throw new Api400Error("Provided password don't match")
     }
 
     const hashedPassword = await hashPassword(password)
@@ -28,10 +28,7 @@ const registerUser = async ({firstName, lastName, username, email, password, pas
 
 const loginUser = async ({username, password}) => {
     if (!username || !password) {
-        throw {
-            status: 400,
-            message: 'Credentials were not provided!'
-        }
+        throw new Api400Error("Credentials were not provided!")
     }
 
     const user = await prisma.user.findUnique({
@@ -42,10 +39,7 @@ const loginUser = async ({username, password}) => {
 
 
     if (!user) {
-        throw {
-            status: 404,
-            message: "User with these credentials doesn't exist!"
-        }
+        throw new Api404Error("User with these credentials doesn't exist!")
     }
 
     const isPasswordValid = await verifyPassword(password, user.password)
@@ -76,6 +70,10 @@ const loginUser = async ({username, password}) => {
 
 
 const refreshToken = (token) => {
+    if (!token) {
+        throw new api401Error("Refresh token weren't provided!")
+    }
+
     const decoded = jwt.decode(token)
     const userInfo = {
         id: decoded.id,

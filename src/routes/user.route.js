@@ -1,6 +1,6 @@
 import {Router} from "express";
 import {loginUser, refreshToken, registerUser} from "../controllers/user.controller.js"
-import checkDuplicateUserCredentialsMiddleware from "../middleware/checkDuplicateUserCredentials.middleware.js";
+import checkDuplicateUserCredentialsMiddleware from "../middlewares/checkDuplicateUserCredentials.middleware.js";
 
 
 const router = Router()
