@@ -5,10 +5,11 @@ import bookRouter from "./routes/book.route.js"
 import authorRouter from "./routes/author.route.js"
 import noteRouter from "./routes/note.route.js"
 import eventRouter from "./routes/event.route.js"
-import authenticateTokenMiddleware from "./middleware/authenticateToken.middleware.js";
+import errorHandler from "./middlewares/errorHandler.middleware.js";
+import authenticateTokenMiddleware from "./middlewares/authenticateToken.middleware.js";
+
 
 const app = express()
-
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
@@ -21,6 +22,6 @@ app.use('/api/book', bookRouter)
 app.use('/api/author', authorRouter)
 app.use('/api/note', noteRouter)
 app.use('/api/event', eventRouter)
-
+app.use(errorHandler)
 
 export default app
